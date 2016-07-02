@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>redux first simple demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min.js"></script>
+</head>
+<body>
+
+<script id="jsbin-javascript">
+'use strict';
+var counterReducer = function counterReducer(state, action) {
+  if (state === undefined) state = 0;
+
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  };
+};
+
+var _Redux = Redux;
+var createStore = _Redux.createStore;
+//ES6
+//var createStore = Redux.createStore;
+//import {createStore} from 'redux'; //if use npm
+
+var store = createStore(counterReducer);
+
+// console.log(store.getState());
+// store.dispatch({type: 'INCREMENT'});
+// console.log(store.getState());
+
+var renderFunc = function renderFunc() {
+  document.body.innerText = store.getState();
+};
+
+//订阅renderFunc，store每次改变后调用上面的renderFunc函数
+store.subscribe(renderFunc);
+renderFunc(); //初次renderFunc，将0输出
+
+//store.diapatch是改变state唯一途径；每点击一次，state都＋1
+document.addEventListener('click', function () {
+  store.dispatch({ type: 'INCREMENT' });
+});
+</script>
+</body>
+</html>
