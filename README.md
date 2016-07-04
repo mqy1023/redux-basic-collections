@@ -160,7 +160,9 @@ Provider.childContextTypes = {
 };
 ```
 3、connect <br/>
+
 mapStateToProps,mapDispatchToProps；通过react-redux函数提供的connect函数把state和actions转换为组件所需要的props。<br/>
+<br/>
 当不需要从父组件传递props可以见简写如下：<br/>
 ```
 //==1、原始写法
