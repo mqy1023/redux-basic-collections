@@ -159,7 +159,7 @@ Provider.childContextTypes = {
   store: React.PropTypes.object
 };
 ```
-3、connect
+3、connect <br/>
 mapStateToProps,mapDispatchToProps；通过react-redux函数提供的connect函数把state和actions转换为组件所需要的props。<br/>
 当不需要从父组件传递props可以见简写如下：<br/>
 ```
@@ -170,8 +170,8 @@ AddTodo = connect(
   }, dispatch => {
     return { dispatch }
   })(AddTodo);
-// ==2、简单方法，即state的default值是{}，dispatch的default的值是{dispatch}
+// ==11、简单方法，即state的default值是{}，dispatch的default的值是{dispatch}
 // AddTodo = connect(null, null)(AddTodo);
-// ==3、最终写法
+// ==111、最终写法
 AddTodo = connect()(AddTodo);
 ```
