@@ -21,11 +21,13 @@ react-redux完整版最简单入门实例
 ### 《四》、《todos》
 redux完整版实例
 
-## [总结]理解redux
+* **
 
-### 一、action
+## 【总结】理解redux
 
-作用：action装载着应用的数据信息(类型+数据)，通过dispatch一个action给store，让reducers根据action来更新state
+### 《一》、理解action
+
+作用：action装载着应用的数据信息(类型+数据)，通过dispatch到reducer返回新的state，同步到store的树结构中，通知组件进行更新
 ```
 //action creators
 export const addTodo = (item) => {
@@ -36,15 +38,15 @@ export const addTodo = (item) => {
   }
 }
 ```
-### 二、store
+### 《二》、理解store
 在redux中一个应用只有唯一的object类型store保持着整个应用的state
-* 持有应用所有的state
-* 通过getState()获取当前state
-* 通过dispatch(action);来更新state
-* 通过subscribe(listener)注册监听事件
-* 通过subscribe(listener) return返回处理取消注册listeners
+* 1、持有应用所有的state
+* 2、通过getState()获取当前state
+* 3、通过dispatch(action);来更新state
+* 4、通过subscribe(listener)注册监听事件
+* 5、通过subscribe(listener) return返回处理取消注册listeners
 
-### 三、reducer
+### 《三》、理解reducer
 
 #### 一、理解reducer之一(state更新)
 * 1、在组件改变state状态时，我们用的时setState()方法而不是this.state.xxx = yyy;来重新更新state状态
@@ -53,7 +55,7 @@ export const addTodo = (item) => {
 而不是this.setState({myState: this.state.myState.push(1)}); <br/>
 当然你得知道到push会改变原数据，而concat会拷贝一份后，在新数据上操作，即不会改变原数据 <br/>
 
-* 3、redux中reducer函数功能就是将原state更新成新的state，即该函数中特别呀注意到不能改变原state
+* 3、redux中reducer函数功能就是将原state拷贝一份后并更新成新的state，即该函数中特别呀注意到不能改变原state
 
 下面是几种正确更新state方法收集：(x 和 xx 和 xxx 表示同效果的不同写法) <br/>
 a、给数组添加数据 <br/>
@@ -126,7 +128,7 @@ const combineReducers = (reducers) => {
 };
 ```
 
-#### 四、理解redux之其他
+#### 《四》、理解redux之其他
 1、ES6语法相关 <br/>
 a、父组件传递props属性之... <br/>
 ```
@@ -142,9 +144,10 @@ const {todos, visibilityFilter} = this.props;
 const todos = this.props.todos;
 const visibilityFilter = this.props.visibilityFilter;
 ```
-2、Provider的解析 <br/>
-渲染子组件，传递子context <br/>
+2、Provider <br/>
+用Provider组件包含住最顶层的组件，将store作为props传入。<br/>
 ```
+//Provider精简源码（渲染子组件，传递子context）
 class Provider extends Component {
   getChildContext() {
     return {
@@ -160,20 +163,20 @@ Provider.childContextTypes = {
 };
 ```
 3、connect <br/>
-
-mapStateToProps,mapDispatchToProps；通过react-redux函数提供的connect函数把state和actions转换为组件所需要的props。<br/>
-<br/>
+用connect方法将store树结构中数据以及actions通过props传递到业务子组件<br/>
+mapStateToProps：是一个函数，返回值是从Redux的state里挑出部分值，它们会合并到props里<br/>
+mapDispatchToProps：是一个函数，返回值是Redux的actionCreators，他们会合并到props里 <br/>
 当不需要从父组件传递props可以见简写如下：<br/>
 ```
-//==1、原始写法
+//== 1、原始写法
 AddTodo = connect(
   state => {
     return {}
   }, dispatch => {
     return { dispatch }
   })(AddTodo);
-// ==11、简单方法，即state的default值是{}，dispatch的default的值是{dispatch}
+// == 11、简单方法，即state的default值是{}，dispatch的default的值是{dispatch}
 // AddTodo = connect(null, null)(AddTodo);
-// ==111、最终写法
+// == 111、最终写法
 AddTodo = connect()(AddTodo);
 ```
