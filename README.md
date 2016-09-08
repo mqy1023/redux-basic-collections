@@ -11,7 +11,7 @@ index.html中的javascript部分是counter_es6.js转译后代码.
 
 * 4、**理解createStore**
 ```javascript
-// createStore源码
+// 简写createStore源码
 const createStore = (reducer) => {
   let state;
   let listeners = [];
@@ -53,49 +53,53 @@ index.html中的javascript部分是counter_es6.js转译后代码.
   而不是this.setState({myState: this.state.myState.push(1)}); .
   > 因为push/splice会改变原数据，而concat会拷贝一份后，在新数据上操作，即不会改变原数据.
 
-几种正确更新state方法收集：(x 和 xx 和 xxx 表示同效果的不同写法) .
-* a、给数组添加数据.
+* a、给数组添加数据1.
 ```javascript
-1、this.setState({myState: this.state.myState.concat(1)});
-11、[...myState, 1];
+// old way
+this.setState({myState: this.state.myState.concat(1)});
+// ES6 way
+[...myState, 1];
 ```
 * b、删除数组中某个index的数据(下标从0开始).
 ```javascript
-2、//slice + concat函数
-const delIndexFunc = (list, index) => {
-  return list.slice(0, index)
-      .concat(list.slice(index + 1));
-};
-22、//... + slice
-const scdFunc = (list, index) => {
-  return [...list.slice(0, index),
-      ...list.slice(index + 1)];
-};
-```
-* c、操作数组中某个index元素：… ＋slice .
-```javascript
-3、concat拼接
-const conFunc = (list, index) => {
-  return list.slice(0, index)
-      .concat(list[index] + 1));
-      .concat(list.slice(index + 1));
-};
-33、//让该index下的数据＋1
-const listFunc = (objList, index) => {
-  return [...objList.slice(0, index),
-          objList[index] + 1,
-          ...objList.slice(index+1)
+const removeCounter = (list, index) => {
+  // Old way:
+  //return list
+  //  .slice(0, index)
+  //  .concat(list.slice(index + 1));
+
+  // ES6 way:
+  return [
+    ...list.slice(0, index),
+    ...list.slice(index + 1)
   ];
 };
 ```
-* **d、更新object对象** .
+* c、操作数组中某个index元素 + 1
 ```javascript
-4、//不改变原对象1, 仅改变对象中completed的值
+const incrementCounter = (list, index) => {
+  // Old way:
+  // return list
+  //  .slice(0, index)
+  //  .concat([list[index] + 1])
+  //  .concat(list.slice(index + 1));
+
+  // ES6 way:
+  return [
+    ...list.slice(0, index),
+    list[index] + 1,
+    ...list.slice(index + 1)
+  ];
+};
+```
+* **d、更新object对象, 使用Object.assign() 和 ...spread** .
+```javascript
+// ES6's Object.assign()
 const toggleFunc = (objC) => {
   return Object.assign({}, objC, {completed: !objC.completed});
 };
 
-44、//不改变原对象2, 仅改变对象中completed的值
+//  the spread operator proposed for ES7
 const toggleFuncc = (objD) => {
   return {...objD, completed: !objD.completed};
 };
@@ -140,9 +144,14 @@ const combineReducers = (reducers) => {
 * the single immutable state tree
 * describing state changes with actions
 * the reducer functions【pure(return返回只和入参有关 & 不改变入参); /impure functions】.
+
 [pure和impure函数](./images/pure&impurefunction.png).
+
 【作用】根据previous state ==更新==> next state
-* store methods: getState(), dispatch(), and subscribe()
+* **3 important methods in store**: getState(), dispatch(), and subscribe()
+  * getState() 获取application中Redux store的当前state
+  * dispatch() 使用时,dispatch actions去改变application中state
+  * subscribe() 注册一个callback, 当action被dispatch后会触发该callback
 
 ### 《一》、理解action
 
@@ -281,3 +290,5 @@ export default bankStore;
 
 ## 参考链接
 [getting started with redux](https://egghead.io/courses/getting-started-with-redux)
+[1、egghead.io_redux_course_notes](https://github.com/tayiorbeii/egghead.io_redux_course_notes)
+[2、egghead.io_idiomatic_redux_course_notes](https://github.com/tayiorbeii/egghead.io_idiomatic_redux_course_notes)
