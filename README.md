@@ -159,7 +159,7 @@ reducer函数作用就是根据原state和dispatch的一个action来计算出新
 
 reducer是纯函数(pure functions)【pure(return返回只和入参有关 & 不改变入参); /impure functions】.
 
-![pure和impure函数](./images/pure&impurefunction.png).
+![pure和impure函数](./images/pure&impurefunction.png =150).
 
 **理解combineReducers**
 * 1、redux中的combineReducers最终写法：.
@@ -267,6 +267,8 @@ export default bankStore;
 ```
 
 ## 参考链接
-[getting started with redux](https://egghead.io/courses/getting-started-with-redux)
-[1、egghead.io_redux_course_notes](https://github.com/tayiorbeii/egghead.io_redux_course_notes)
-[2、egghead.io_idiomatic_redux_course_notes](https://github.com/tayiorbeii/egghead.io_idiomatic_redux_course_notes)
+[getting started with redux](https://egghead.io/courses/getting-started-with-redux).
+
+[1、egghead.io_redux_course_notes](https://github.com/tayiorbeii/egghead.io_redux_course_notes).
+
+[2、egghead.io_idiomatic_redux_course_notes](https://github.com/tayiorbeii/egghead.io_idiomatic_redux_course_notes).
