@@ -119,22 +119,6 @@ redux完整版实例
 
 【知识点】
 * 1、**理解combineReducers**
-```javascript
-const combineReducers = (reducers) => {
-  return (state = {}, action) => {
-    return Object.keys(reducers).reduce(
-      (nextState, key) => {
-        nextState[key] = reducers[key](
-          state[key],
-          action
-        );
-        return nextState;
-       },
-      {}
-    );
-  };
-};
-```
 * 2、**理解Provider**
 
 * **
@@ -143,17 +127,18 @@ const combineReducers = (reducers) => {
 
 * the single immutable state tree
 * describing state changes with actions
-* the reducer functions【pure(return返回只和入参有关 & 不改变入参); /impure functions】.
+* the reducer functions
+* **3 important methods in store**: getState(), dispatch(), and subscribe()
 
-[pure和impure函数](./images/pure&impurefunction.png).
-
-【作用】根据previous state ==更新==> next state
+### 《一》、理解store
+在redux中一个应用只有唯一的object类型store保持着整个应用的state .
+应用(application)中任意容器组件(container components)都可以直接访问store .
 * **3 important methods in store**: getState(), dispatch(), and subscribe()
   * getState() 获取application中Redux store的当前state
   * dispatch() 使用时,dispatch actions去改变application中state
   * subscribe() 注册一个callback, 当action被dispatch后会触发该callback
 
-### 《一》、理解action
+### 《二》、理解action
 
 作用：action装载着应用的数据信息(类型+数据)，通过dispatch到reducer返回新的state，同步到store的树结构中，通知组件进行更新 .
 Dispatching an action is like sending a message to the store saying that something happened and that the store should update itself in response.
@@ -167,23 +152,16 @@ export const addTodo = (item) => {
   }
 }
 ```
-### 《二》、理解store
-在redux中一个应用只有唯一的object类型store保持着整个应用的state .
-应用(application)中任意容器组件(container components)都可以直接访问store .
-容器组件中可以调用store中三个方法如下：
-* 2、通过getState()获取当前state
-* 3、通过dispatch(action) 到store，dispatch用来触发改变state
-* 4、通过subscribe(listener)注册监听事件到store中，state发生改变会被通知重新渲染
 
-### 《三》、理解reducer(Inside the Store: Reducer functions)
+### 《三》、理解reducer
 reducer函数作用就是根据原state和dispatch的一个action来计算出新的state，类似Array中的reduce.
-根据previous state ==更新==> next state
+根据previous state ==更新==> next state.
 
-#### 一、理解reducer之一(state更新)
-reducer函数功能就是将原state拷贝一份后, 拷贝后并更新state，即该函数中特别得注意到不能改变原state.
+reducer是纯函数(pure functions)【pure(return返回只和入参有关 & 不改变入参); /impure functions】.
 
+![pure和impure函数](./images/pure&impurefunction.png).
 
-#### 二、理解reducer之二(理解combineReducers)
+**理解combineReducers**
 * 1、redux中的combineReducers最终写法：.
 ```javascript
 import { combineReducers } from 'redux'
@@ -278,12 +256,12 @@ import { createStore, applyMiddleware } from 'redux'
 import bankReducer from './bankReducer';
 
 const logger = (store) => (next) => (action) => {
- console.log('dispatching:', action);
- return next(action);
+  console.log('dispatching:', action);
+  return next(action);
 }
 const bankStore = createStore(
- bankReducer,
- applyMiddleware(logger) // enhance the store with the logger middleware
+  bankReducer,
+  applyMiddleware(logger) // enhance the store with the logger middleware
 );
 export default bankStore;
 ```
