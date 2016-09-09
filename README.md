@@ -159,7 +159,7 @@ reducer函数作用就是根据原state和dispatch的一个action来计算出新
 
 reducer是纯函数(pure functions)【pure(return返回只和入参有关 & 不改变入参); /impure functions】.
 
-![pure和impure函数](./images/pure&impurefunction.png =150).
+![pure和impure函数](./images/pure&impurefunction.png =150x80).
 
 **理解combineReducers**
 * 1、redux中的combineReducers最终写法：.
