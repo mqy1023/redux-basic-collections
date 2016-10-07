@@ -152,7 +152,60 @@ export const addTodo = (item) => {
   }
 }
 ```
+**Asynchronous Action Creators**.
 
+  Redux dispatches are synchronous: Every time a dispatch happens, all registered reducers are immediately
+invoked with the dispatched actions (in the order they were dispatched), and a new state object is produced.
+
+  Remember that actions are just plain JavaScript objects with a “type” field and optional data:
+{ type: ACTION_TYPE, result: 'whatever' };.
+
+  This raises a question: How to deal with asynchronous operations (such as data fetching, for example) in Redux?
+The answer is provided by Redux in the form of a middleware: Redux-thunk.
+
+  Redux-thunk teaches Redux to recognize a special kind of action - an asynchronous action. An
+asynchronous action is in fact a function that receives the dispatch method as a parameter and can decide
+when to dispatch the actual action object. In practice, when using redux thunk you can keep using standard
+synchronous action creators like this:
+```javascript
+syncActionCreator() {
+ return { type: constants.ACTION_TYPE, result: 'whatever' };
+}
+But you can also have asynchronous action creators like this:
+asyncActionCreator() {
+    return (dispatch) => {
+        // Any time consuming async operation (in. eg. data fetching)
+        timeConsumingOperation.then((result) => {
+            dispatch({ type: constants.ACTION_TYPE, result: result });
+        });
+    };
+}
+```
+  In the sample asyncActionCreator code above, a function is returned instead of an action object.
+
+  With the redux-thunk middleware, if dispatch receives an Action object, redux-thunk will do nothing,
+and the reducers will get called with the action as usual, and change the state synchronously.
+
+  If instead dispatch receives a thunk function, redux-thunk will execute it, passing the dispatch
+function as a parameter. It will be the thunk function’s responsibility to actually dispatch an action object. The
+thunk function can then make async calls and dispatch actual action objects only after the async call has
+finished.
+
+**Installation and usage redux-thunk**.
+
+  Redux thunk is an external module, so make sure to declare it as a project dependency and install it (both can be
+done with the command: `npm install --save redux-thunk`.
+
+  Then, to enable Redux Thunk, use applyMiddleware in your Redux Store:
+  ```javascript
+  import { createStore, applyMiddleware } from 'redux';
+  import thunk from 'redux-thunk';
+  import reducers from './reducers/index';
+  const store = createStore(
+   reducers,
+   applyMiddleware(thunk)
+  );
+  ```
 ### 《三》、理解reducer
 reducer函数作用就是根据原state和dispatch的一个action来计算出新的state，类似Array中的reduce.
 根据previous state ==更新==> next state.
@@ -202,11 +255,15 @@ const todos = this.props.todos;
 const visibilityFilter = this.props.visibilityFilter;
 ```
 #### 二、React bindings	for	Redux
-“react-redux”库提供两个如下方法使得更容易、更直接连接react组件和Redux store
-1a、传递store原老方法：
+“react-redux”库提供两个如下方法使得更容易、更直接连接react组件和Redux store.
+
+1a、传递store原老方法.
+
 * passing the store down explicitly via props(显式)
 * passing the store down implicitly via props(隐式)
-1b、传递store新方法
+
+1b、传递store新方法.
+
 * passing the store down with <Provider> from react redux
 
 2a、连接react和redux新方法
@@ -238,31 +295,38 @@ b、mapDispatchToProps：容器组件往下传递回调的callback，callback函
 当不需要从父组件传递props可以见简写如下：.
 ```javascript
 //== 1、原始写法
-AddTodo = connect(
-  state => {
-    return {}
-  }, dispatch => {
-    return { dispatch }
-  })(AddTodo);
+AddTodo = connect(state => ({ }), dispatch => ({ dispatch }))(AddTodo);
 // == 11、简单方法，即state的default值是{}，dispatch的default的值是{dispatch}
 // AddTodo = connect(null, null)(AddTodo);
 // == 111、最终写法
 AddTodo = connect()(AddTodo);
 ```
-#### 三、Applying	a	Middleware中间件
+#### 三、Applying	a	Middleware中间件和开启chrome浏览器的扩展程序`Redux DevTools`
 ```javascript
 //bankStore.js
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 import bankReducer from './bankReducer';
 
-const logger = (store) => (next) => (action) => {
-  console.log('dispatching:', action);
+const logger = (store) => (next) => (action) => { // logger打印
+  if(typeof action !== "function"){
+    console.log('dispatch action:', action);
+    console.log('state:', store.getState());
+  }
   return next(action);
-}
-const bankStore = createStore(
-  bankReducer,
-  applyMiddleware(logger) // enhance the store with the logger middleware
+};
+/*global someFunction window:true*/
+/*eslint no-undef: "error"*/
+const enhancers = compose( // Redux DevTools
+  applyMiddleware(thunk, logger), // enhance the store with the logger middleware
+  window.devToolsExtension ? window.devToolsExtension() : f => f
 );
+
+const bankStore = createStore(
+  reducers,
+  enhancers
+);
+
 export default bankStore;
 ```
 
@@ -272,3 +336,5 @@ export default bankStore;
 [1、egghead.io_redux_course_notes](https://github.com/tayiorbeii/egghead.io_redux_course_notes).
 
 [2、egghead.io_idiomatic_redux_course_notes](https://github.com/tayiorbeii/egghead.io_idiomatic_redux_course_notes).
+
+[3、Alternative Chapter 6 (Using Redux instead of Flux)](http://www.pro-react.com/materials/ch06-alt-redux.pdf).
